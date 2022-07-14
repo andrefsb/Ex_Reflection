@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,18 +36,34 @@ namespace Ex_01
     {
         static void Main(string[] args)
         {
-            DisplayPublicProperties();
+            List<Student> students = new List<Student>();
 
+            Student student = new Student("Felipe", "UFRJ", 3);
+            students.Add(student);
+            students.Add(new Student("Pedro", "USP", 2));
+
+            Student newStudent = Activator.CreateInstance<Student>();
+
+            CreateInstance(student);
+
+            foreach (var s in students)
+            {
+                DisplayPublicProperties(s);
+            }
 
         }
-        public static void DisplayPublicProperties()
+        public static void DisplayPublicProperties(Student student)
+        {
+            PropertyInfo[] propertyInfos = student.GetType().GetProperties();
+            Console.WriteLine($"Temos {propertyInfos.Length} propriedades públicas na classe Student:");
+            foreach (var propertyInfo in propertyInfos)
+            {
+                Console.WriteLine($"{propertyInfo.Name}, do tipo '{propertyInfo.PropertyType.Name}', com valor '{propertyInfo.GetValue(student)}'.");
+            }
+        }
+        public static void CreateInstance(Student student)
         {
 
         }
-        public static void CreateInstance()
-        {
-
-        }
-
     }
 }
