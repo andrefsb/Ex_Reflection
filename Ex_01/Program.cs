@@ -57,26 +57,39 @@ namespace Ex_01
             foreach (var propertyInfo in propertyInfos)
             {
                 Console.WriteLine($"{propertyInfo.Name}, do tipo '{propertyInfo.PropertyType.Name}', com valor '{propertyInfo.GetValue(student)}'.");
+
             }
         }
         public static void CreateInstance(List<Student> students)
         {
-            var types = Assembly.GetExecutingAssembly().GetTypes();
-            foreach (var type in types)
+            //var types = Assembly.GetExecutingAssembly().GetTypes();
+            //foreach (var type in types)
+            //{
+            //    if (type.IsAssignableTo(typeof(Student)) && type.IsClass && !type.IsAbstract)
+            //    {
+            var strategies = new Dictionary<Type, Func<string,object>>();
+            strategies.Add(typeof(int), (string input) => int.Parse(input));
+            strategies.Add(typeof(string), (string input) => (input));
+            var instance = (Student)Activator.CreateInstance(typeof(Student));
+            PropertyInfo[] proInfos = typeof(Student).GetProperties();
+            foreach (var propertyInfo in proInfos)
             {
-                if (type.IsAssignableTo(typeof(Student)) && type.IsClass && !type.IsAbstract)
-                {
-                    var instance = (Student)Activator.CreateInstance(type);
-                    var name = instance.Name;
-                    var university = instance.University;
-                    var number = instance.RollNumber;
-
-                    var info = new Student(name, university, number);
-                    students.Add(info);
-                    info.DisplayInfo();
-
-                }
+                Console.WriteLine($"{propertyInfo.Name}, do tipo '{propertyInfo.PropertyType.Name}'.");
+                Console.Write($"Digite o {propertyInfo.Name}: ");
+                var input = Console.ReadLine();
+                var value = strategies[propertyInfo.PropertyType](input);
+                propertyInfo.SetValue(instance, value, null);
             }
+            var name = instance.Name;
+            var university = instance.University;
+            var number = instance.RollNumber;
+
+            var info = new Student(name, university, number);
+            students.Add(info);
+            info.DisplayInfo();
+
+            //    }
+            //}
         }
     }
 }
