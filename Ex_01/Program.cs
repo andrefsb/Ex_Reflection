@@ -42,9 +42,7 @@ namespace Ex_01
             students.Add(student);
             students.Add(new Student("Pedro", "USP", 2));
 
-            Student newStudent = Activator.CreateInstance<Student>();
-
-            CreateInstance(student);
+            CreateInstance(students);
 
             foreach (var s in students)
             {
@@ -61,9 +59,24 @@ namespace Ex_01
                 Console.WriteLine($"{propertyInfo.Name}, do tipo '{propertyInfo.PropertyType.Name}', com valor '{propertyInfo.GetValue(student)}'.");
             }
         }
-        public static void CreateInstance(Student student)
+        public static void CreateInstance(List<Student> students)
         {
+            var types = Assembly.GetExecutingAssembly().GetTypes();
+            foreach (var type in types)
+            {
+                if (type.IsAssignableTo(typeof(Student)) && type.IsClass && !type.IsAbstract)
+                {
+                    var instance = (Student)Activator.CreateInstance(type);
+                    var name = instance.Name;
+                    var university = instance.University;
+                    var number = instance.RollNumber;
 
+                    var info = new Student(name, university, number);
+                    students.Add(info);
+                    info.DisplayInfo();
+
+                }
+            }
         }
     }
 }

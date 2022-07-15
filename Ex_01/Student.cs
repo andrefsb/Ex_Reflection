@@ -18,6 +18,10 @@ namespace Ex_01
             University = university;
             RollNumber = rollNumber;    
         }
+        public Student()
+        {
+
+        }
 
         public void DisplayInfo()
         {
